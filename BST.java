@@ -115,7 +115,7 @@ public class BST<E extends Comparable<E>/*, T extends Treeable<E>*/>
     
     public int height()
     {
-        throw new UnsupportedOperationException("not implemented.  Please implement this method in BST");
+        return calculateLevels();
     }
 
     public int calculateLevels()
@@ -160,6 +160,11 @@ public class BST<E extends Comparable<E>/*, T extends Treeable<E>*/>
 
     private void preOrderList(Treeable<E> start, ArrayList<E> listOfNodes)
     {
+        if (rootNode==null){
+            return;
+        }
+
+        listOfNodes.add(start.getValue());
         throw new UnsupportedOperationException("not implemented.  Please implement this method in BST");
     }
 
@@ -278,13 +283,24 @@ public class BST<E extends Comparable<E>/*, T extends Treeable<E>*/>
     //returns true if given element is found
     public boolean contains(E i)
     {
-        throw new UnsupportedOperationException("not implemented.  Please implement this method in BST");
+        return findNode(i) != null;
     }
 
     //returns the BstNode that contains a given value, or unll if no such BstNode exists
     public Treeable findNode(E item)
     {
-        throw new UnsupportedOperationException("not implemented.  Please implement this method in BST");
+        Treeable<E> currentNode = rootNode;
+        while (currentNode != null)
+        {
+            int comparison = item.compareTo(currentNode.getValue());
+            if (comparison == 0)
+                return currentNode;
+            else if (comparison < 0)
+                currentNode = currentNode.getLeft();
+            else
+                currentNode = currentNode.getRight();
+        }
+        return null;
     }
 
     public ArrayList<E> range(E lowBound, E highBound)
@@ -302,13 +318,36 @@ public class BST<E extends Comparable<E>/*, T extends Treeable<E>*/>
 
     public String pathToNode(E i)
     {
-        throw new UnsupportedOperationException("not implemented.  Please implement this method in BST"); 
+        Treeable<E> currentNode = rootNode;
+        String path = "";
+        while (currentNode != null)
+        {
+            if (!path.isEmpty())
+                path += " -> ";
+            path += currentNode.getValue();
+
+            int comparison = i.compareTo(currentNode.getValue());
+            if (comparison == 0)
+                return path;
+            else if (comparison < 0)
+                currentNode = currentNode.getLeft();
+            else
+                currentNode = currentNode.getRight();
+        }
+        return "";
     }
 
     //return the number of nodes in the BST
     public int size()
     {
-        throw new UnsupportedOperationException("not implemented.  Please implement this method in BST"); 
+        return sizeFrom(rootNode);
+    }
+
+    private int sizeFrom(Treeable<E> currentNode)
+    {
+        if (currentNode == null)
+            return 0;
+        return 1 + sizeFrom(currentNode.getLeft()) + sizeFrom(currentNode.getRight());
     }
 
     public void rebalance()
@@ -321,6 +360,22 @@ public class BST<E extends Comparable<E>/*, T extends Treeable<E>*/>
         rootNode = newBST.rootNode;
     } 
 
+    private void inOrderTraversal(List<E> elements, Treeable<E> node){
+if(node==null){
+    return;
+}
+inOrderTraversal(elements, node.getLeft());
+elements.add(node.getValue());
+inOrderTraversal(elements, node.getRight());
+
+    }
+public List<E> inOrderTraversal(){
+    List<E> elements=new ArrayList<E>();
+
+    inOrderTraversal(elements,rootNode);
+
+    return elements;
+}
     
     //adds the values from ArrayList<E> values starting at position start and going to position end, to the BST
     private void bstFromList(ArrayList<E> values, int start, int end)
@@ -330,11 +385,21 @@ public class BST<E extends Comparable<E>/*, T extends Treeable<E>*/>
 
     public E minValue()
     {
-        throw new UnsupportedOperationException("not implemented.  Please implement this method in BST");
+        Treeable<E> currentNode = rootNode;
+        if (currentNode == null)
+            return null;
+        while (currentNode.getLeft() != null)
+            currentNode = currentNode.getLeft();
+        return currentNode.getValue();
     }
 
     public E maxValue()
     {
-        throw new UnsupportedOperationException("not implemented.  Please implement this method in BST");
+        Treeable<E> currentNode = rootNode;
+        if (currentNode == null)
+            return null;
+        while (currentNode.getRight() != null)
+            currentNode = currentNode.getRight();
+        return currentNode.getValue();
     }
 }
